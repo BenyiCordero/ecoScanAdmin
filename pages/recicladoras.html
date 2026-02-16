@@ -1,4 +1,546 @@
 <!-- recicladoras.html -->
-<div class="container">
-    <h2>Gestión de Recicladoras</h2>
+<div class="container-fluid px-2 px-md-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3">
+        <div>
+            <h4 class="fw-semibold mb-1">Gestión de Recicladoras</h4>
+            <p class="text-muted mb-0 small">Administra las sucursales de reciclaje</p>
+        </div>
+        <div class="d-flex gap-2">
+            <div class="btn-group" role="group">
+                <input type="checkbox" class="btn-check" id="soloActivas" autocomplete="off" onchange="cargarRecicladoras()">
+                <label class="btn btn-outline-success btn-sm" for="soloActivas">
+                    <i class="bi bi-check-circle me-1"></i>Solo Activas
+                </label>
+            </div>
+            <button class="btn btn-success btn-sm fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#recicladoraModal" onclick="limpiarFormularioRecicladora()">
+                <i class="bi bi-plus-lg me-1"></i>
+                <span class="d-none d-sm-inline">Nueva Recicladora</span>
+                <span class="d-inline d-sm-none">Nueva</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Buscador -->
+    <div class="panel-card rounded-15 p-3 mb-4">
+        <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" id="buscadorRecicladora" class="form-control border-start-0" placeholder="Buscar por nombre o dirección..." oninput="filtrarRecicladoras()">
+                </div>
+            </div>
+            <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
+                <span class="badge bg-light text-dark border" id="contadorRecicladoras">
+                    <i class="bi bi-building me-1"></i>0 recicladoras
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Recicladoras -->
+    <div class="panel-card rounded-15 p-3">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tablaRecicladoras">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">ID</th>
+                        <th>Nombre</th>
+                        <th>Dirección</th>
+                        <th>Estado</th>
+                        <th class="text-end text-md-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaRecicladorasBody">
+                    <tr id="loadingRow">
+                        <td colspan="6" class="text-center py-4">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="sinRecicladoras" class="text-center py-5 d-none">
+            <i class="bi bi-inbox fs-1 text-muted"></i>
+            <p class="text-muted mt-2">No se encontraron recicladoras</p>
+        </div>
+    </div>
 </div>
+
+<!-- Modal para Crear/Editar Recicladora -->
+<div class="modal fade" id="recicladoraModal" tabindex="-1" aria-labelledby="recicladoraModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-15 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-semibold" id="recicladoraModalLabel">Nueva Recicladora</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRecicladora" onsubmit="guardarRecicladora(event)">
+                    <input type="hidden" id="recicladoraId">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label for="nombreRecicladora" class="form-label fw-semibold">
+                                Nombre <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="nombreRecicladora" required maxlength="100" placeholder="Recicladora Centro">
+                            <div class="invalid-feedback" id="nombreRecicladoraError"></div>
+                        </div>
+                        <div class="col-12">
+                            <label for="direccionRecicladora" class="form-label fw-semibold">
+                                Dirección <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="direccionRecicladora" required rows="2" maxlength="255" placeholder="Calle, Número, Colonia, CP"></textarea>
+                            <div class="invalid-feedback" id="direccionRecicladoraError"></div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="latitudRecicladora" class="form-label fw-semibold">
+                                Latitud
+                            </label>
+                            <input type="text" class="form-control" id="latitudRecicladora" placeholder="19.4326">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="longitudRecicladora" class="form-label fw-semibold">
+                                Longitud
+                            </label>
+                            <input type="text" class="form-control" id="longitudRecicladora" placeholder="-99.1332">
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="activaRecicladora" checked>
+                                <label class="form-check-label fw-semibold" for="activaRecicladora">
+                                    Recicladora Activa
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success" id="btnGuardarRecicladora">
+                            <i class="bi bi-check-lg me-1"></i>Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Ver Detalle de Recicladora -->
+<div class="modal fade" id="verRecicladoraModal" tabindex="-1" aria-labelledby="verRecicladoraModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-15 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-semibold" id="verRecicladoraModalLabel">
+                    <i class="bi bi-building me-2 text-success"></i>Detalle de Recicladora
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="bg-light rounded-15 p-3 mb-3">
+                    <div class="row">
+                        <div class="col-6 col-md-4 mb-3">
+                            <small class="text-muted text-uppercase fw-semibold">ID</small>
+                            <div class="fw-semibold" id="verRecicladoraId">-</div>
+                        </div>
+                        <div class="col-6 col-md-4 mb-3">
+                            <small class="text-muted text-uppercase fw-semibold">Estado</small>
+                            <div class="badge bg-success" id="verRecicladoraEstado">Activa</div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <small class="text-muted text-uppercase fw-semibold">Nombre</small>
+                            <div class="fs-5 fw-semibold text-success" id="verRecicladoraNombre">-</div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <small class="text-muted text-uppercase fw-semibold">Dirección</small>
+                            <div class="fw-semibold" id="verRecicladoraDireccion">-</div>
+                        </div>
+                        <div class="col-12">
+                            <small class="text-muted text-uppercase fw-semibold">Ubicación</small>
+                            <div class="small text-muted" id="verRecicladoraUbicacion">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Gestionar Materiales y Horarios -->
+<div class="modal fade" id="gestionarRecicladoraModal" tabindex="-1" aria-labelledby="gestionarRecicladoraModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content rounded-15 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <h5 class="modal-title fw-semibold" id="gestionarRecicladoraModalLabel">
+                        <i class="bi bi-gear me-2 text-success"></i>Gestionar Recicladora
+                    </h5>
+                    <p class="text-muted small mb-0" id="gestionarRecicladoraSubtitulo">-</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="gestionarRecicladoraId">
+                
+                <!-- Tabs para Materiales y Horarios -->
+                <ul class="nav nav-pills mb-3" id="gestionarTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="materiales-tab" data-bs-toggle="pill" data-bs-target="#tab-materiales" type="button" role="tab">
+                            <i class="bi bi-bricks me-1"></i>Materiales
+                            <span class="badge bg-secondary ms-1" id="badgeMateriales">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="horarios-tab" data-bs-toggle="pill" data-bs-target="#tab-horarios" type="button" role="tab">
+                            <i class="bi bi-clock me-1"></i>Horarios
+                            <span class="badge bg-secondary ms-1" id="badgeHorarios">0</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="gestionarTabsContent">
+                    <!-- TAB MATERIALES -->
+                    <div class="tab-pane fade show active" id="tab-materiales" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-semibold mb-0">Materiales Aceptados</h6>
+                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#agregarMaterialModal">
+                                <i class="bi bi-plus-lg me-1"></i>Agregar Material
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0" id="tablaMaterialesRecicladora">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Material</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaMaterialesRecicladoraBody">
+                                    <tr>
+                                        <td colspan="3" class="text-center py-3 text-muted">
+                                            <i class="bi bi-inbox me-2"></i>No hay materiales vinculados
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TAB HORARIOS -->
+                    <div class="tab-pane fade" id="tab-horarios" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-semibold mb-0">Horarios de Atención</h6>
+                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#agregarHorarioModal">
+                                <i class="bi bi-plus-lg me-1"></i>Agregar Horario
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0" id="tablaHorariosRecicladora">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Día</th>
+                                        <th>Hora Inicio</th>
+                                        <th>Hora Fin</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaHorariosRecicladoraBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-3 text-muted">
+                                            <i class="bi bi-inbox me-2"></i>No hay horarios registrados
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Agregar Material a Recicladora -->
+<div class="modal fade" id="agregarMaterialModal" tabindex="-1" aria-labelledby="agregarMaterialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-15 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-semibold" id="agregarMaterialModalLabel">
+                    <i class="bi bi-plus-circle me-2 text-success"></i>Agregar Material
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgregarMaterial" onsubmit="agregarMaterialRecicladora(event)">
+                    <input type="hidden" id="recicladoraIdMaterial">
+                    <div class="mb-3">
+                        <label for="selectMaterial" class="form-label fw-semibold">
+                            Seleccionar Material <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="selectMaterial" required>
+                            <option value="">-- Selecciona un material --</option>
+                            <!-- Se cargará dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-plus-lg me-1"></i>Agregar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar/Agregar Horario -->
+<div class="modal fade" id="agregarHorarioModal" tabindex="-1" aria-labelledby="agregarHorarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-15 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-semibold" id="agregarHorarioModalLabel">
+                    <i class="bi bi-clock me-2 text-success"></i>Agregar Horario
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgregarHorario" onsubmit="guardarHorarioRecicladora(event)">
+                    <input type="hidden" id="horarioId">
+                    <input type="hidden" id="recicladoraIdHorario">
+                    <div class="mb-3">
+                        <label for="diaSemana" class="form-label fw-semibold">
+                            Día de la Semana <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="diaSemana" required>
+                            <option value="">-- Selecciona un día --</option>
+                            <option value="LUNES">Lunes</option>
+                            <option value="MARTES">Martes</option>
+                            <option value="MIERCOLES">Miércoles</option>
+                            <option value="JUEVES">Jueves</option>
+                            <option value="VIERNES">Viernes</option>
+                            <option value="SABADO">Sábado</option>
+                            <option value="DOMINGO">Domingo</option>
+                        </select>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label for="horaInicio" class="form-label fw-semibold">
+                                Hora Inicio <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" class="form-control" id="horaInicio" required>
+                        </div>
+                        <div class="col-6">
+                            <label for="horaFin" class="form-label fw-semibold">
+                                Hora Fin <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" class="form-control" id="horaFin" required>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg me-1"></i>Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación para Eliminar Recicladora -->
+<div class="modal fade" id="confirmDeleteRecicladoraModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-15 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-semibold text-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas <strong>eliminar lógicamente</strong> la recicladora <strong id="deleteRecicladoraNombre">-</strong>?</p>
+                <p class="text-muted small mb-0">La recicladora se marcará como inactiva pero los datos permanecerán en el sistema.</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmDeleteRecicladora" onclick="eliminarRecicladora()">
+                    <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación para Eliminar Material de Recicladora -->
+<div class="modal fade" id="confirmDeleteMaterialRecicladoraModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-15 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-semibold text-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Desvinculación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas <strong>eliminar el material</strong> <strong id="deleteMaterialNombre">-</strong> de esta recicladora?</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmDeleteMaterial" onclick="eliminarMaterialRecicladora()">
+                    <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación para Eliminar Horario -->
+<div class="modal fade" id="confirmDeleteHorarioModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-15 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-semibold text-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas <strong>eliminar el horario</strong> del <strong id="deleteHorarioDia">-</strong>?</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmDeleteHorario" onclick="eliminarHorarioRecicladora()">
+                    <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #tablaRecicladoras thead th {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--muted);
+        border-bottom: 2px solid rgba(109, 211, 201, 0.2);
+    }
+    
+    #tablaRecicladoras tbody tr {
+        transition: background-color 0.15s ease;
+    }
+    
+    #tablaRecicladoras tbody tr:hover {
+        background-color: rgba(109, 211, 201, 0.08);
+    }
+    
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.15s ease;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-ver {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+        border: none;
+    }
+    
+    .btn-ver:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+    
+    .btn-editar {
+        background-color: rgba(255, 193, 7, 0.15);
+        color: #ffc107;
+        border: none;
+    }
+    
+    .btn-editar:hover {
+        background-color: #ffc107;
+        color: #0f1724;
+    }
+    
+    .btn-gestionar {
+        background-color: rgba(109, 211, 201, 0.15);
+        color: #6dd3c9;
+        border: none;
+    }
+    
+    .btn-gestionar:hover {
+        background-color: #6dd3c9;
+        color: #08303a;
+    }
+    
+    .btn-eliminar {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border: none;
+    }
+    
+    .btn-eliminar:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .btn-eliminar-mini {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        font-size: 12px;
+    }
+    
+    .badge-estado {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+    
+    @media (max-width: 767.98px) {
+        .table-responsive {
+            font-size: 0.8rem;
+        }
+        
+        #tablaRecicladoras thead th,
+        #tablaRecicladoras tbody td {
+            padding: 0.6rem 0.4rem;
+        }
+        
+        .btn-action {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .hide-mobile {
+            display: none;
+        }
+    }
+</style>

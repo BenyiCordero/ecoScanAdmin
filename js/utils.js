@@ -190,4 +190,21 @@ export async function cargarVista(ruta) {
 
     const html = await response.text();
     document.getElementById("main-content").innerHTML = html;
+
+    if(ruta.includes("configuracion.html")){
+        const module = await import("./configuracion.js");
+        module.initConfiguration();
+    }
+    if(ruta.includes("materiales.html")){
+        const module = await import("./materiales.js");
+        module.cargarPerfil();
+    }
+    if(ruta.includes("recicladoras.html")){
+        const module = await import("./recicladoras.js");
+        module.cargarPerfil();
+    }
+    if(ruta.includes("usuarios.html")){
+        const module = await import("./usuarios.js");
+        module.cargarPerfil();
+    }
 }
