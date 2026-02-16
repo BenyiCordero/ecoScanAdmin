@@ -1,35 +1,61 @@
-import { getUserProfile, clearUserProfile } from './session.js';
+import { getUserProfile } from './session.js';
 
-async function initPartials() {
+/**
+ * Renderiza el topbar con la información del usuario
+ * @param {boolean} forceRefresh - Si es true, fuerza traer datos del backend
+ */
+async function renderTopbar(forceRefresh = false) {
 
-    setupCommonBehavior();
-
-    try{
-        const profile = await getUserProfile().catch(err => {
+    try {
+        const profile = await getUserProfile({ forceRefresh }).catch(err => {
             console.warn("No se pudo obtener el perfil, usando valores por defecto", err);
             return null;
         });
 
         const nombreTop = document.getElementById('nombre-top');
         const letraIcon = document.getElementById('letra-icon');
+
         if (profile) {
-            if (nombreTop) nombreTop.textContent = profile.nombre + " " + profile.primerApellido + " " + profile.segundoApellido;
-            if (letraIcon) letraIcon.textContent = profile.primeros || (profile.nombreSimple?.charAt(0)?.toUpperCase()) || 'U';
+            if (nombreTop) {
+                nombreTop.textContent =
+                    profile.nombre + " " +
+                    profile.primerApellido + " " +
+                    profile.segundoApellido;
+            }
+
+            if (letraIcon) {
+                letraIcon.textContent =
+                    profile.primeros ||
+                    profile.nombreSimple?.charAt(0)?.toUpperCase() ||
+                    'U';
+            }
+
         } else {
             if (nombreTop) nombreTop.textContent = 'Usuario';
             if (letraIcon) letraIcon.textContent = 'U';
         }
-    } catch(e){
+
+    } catch (e) {
         console.error("Error rellenando topbar", e);
-        // Fallback defaults
+
         const nombreTop = document.getElementById('nombre-top');
         const letraIcon = document.getElementById('letra-icon');
+
         if (nombreTop) nombreTop.textContent = 'Usuario';
         if (letraIcon) letraIcon.textContent = 'U';
     }
+}
+
+
+async function initPartials() {
+
+    setupCommonBehavior();
+
+    await renderTopbar();
 
     document.dispatchEvent(new CustomEvent('partialsLoaded'));
 }
+
 
 function setupCommonBehavior() {
 
@@ -44,5 +70,11 @@ function setupCommonBehavior() {
     }
 
 }
+
+
+document.addEventListener('userUpdated', async () => {
+    await renderTopbar(true); 
+});
+
 
 document.addEventListener('DOMContentLoaded', initPartials);

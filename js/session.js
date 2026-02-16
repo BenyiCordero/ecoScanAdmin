@@ -75,6 +75,7 @@ async function fetchUserProfileFromApiInternal(retry = false, attempt = 0) {
     ].map(s => s?.trim()).filter(Boolean).join(' ').trim();
 
     const profile = {
+        idUsuario: data.idUsuario,
         email: data.email,
         rol: data.rol,
         nombre: data.nombre || '',

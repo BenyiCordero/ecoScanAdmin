@@ -1,7 +1,7 @@
 // js/auth.js
+import { displayError, clearError, displayMessage, clearMessage } from './utils.js';
 const logoutButton = document.getElementById('btnLogout');
 const showLoginLink = document.getElementById('show-login');
-import { displayError, clearError, displayMessage, clearMessage } from './utils.js';
 
 const loginError = document.getElementById('auth-error');
 const authMessage = document.getElementById('auth-message'); 
