@@ -205,6 +205,6 @@ export async function cargarVista(ruta) {
     }
     if(ruta.includes("usuarios.html")){
         const module = await import("./usuarios.js");
-        module.cargarPerfil();
+        module.initUsuarios();
     }
 }
