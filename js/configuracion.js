@@ -14,7 +14,7 @@ const confirmDeleteEmail = document.getElementById("confirmDeleteEmail");
 const form = document.getElementById("formPerfil");
 
 /*URLs*/
-const BASE_API_URL = 'http://localhost:8080/ecoScan_rest/api/usuario';
+const BASE_API_URL = '/api/usuario';
 const UPDATE_PROFILE = `${BASE_API_URL}/update`;
 
 let idUsuario = null;

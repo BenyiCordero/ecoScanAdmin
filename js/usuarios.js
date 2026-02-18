@@ -1,6 +1,6 @@
 import { showToast } from './utils.js';
 
-const BASE_API_URL = 'http://localhost:8080/ecoScan_rest/api/usuario';
+const BASE_API_URL = '/api/usuario';
 const GET_ALL = `${BASE_API_URL}/getall`;
 const CREATE = `${BASE_API_URL}/register`;
 const UPDATE = `${BASE_API_URL}/update`;

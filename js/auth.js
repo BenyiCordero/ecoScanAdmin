@@ -6,7 +6,7 @@ const showLoginLink = document.getElementById('show-login');
 const loginError = document.getElementById('auth-error');
 const authMessage = document.getElementById('auth-message'); 
 
-const BASE_API_URL = 'http://localhost:8080/ecoScan_rest/api/usuario';
+const BASE_API_URL = '/api/usuario';
 const LOGIN_API_URL = `${BASE_API_URL}/login`;
 
 function isPathMatch(pathname, candidates) {
