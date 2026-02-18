@@ -201,7 +201,7 @@ export async function cargarVista(ruta) {
     }
     if(ruta.includes("recicladoras.html")){
         const module = await import("./recicladoras.js");
-        module.cargarPerfil();
+        module.initRecicladoras();
     }
     if(ruta.includes("usuarios.html")){
         const module = await import("./usuarios.js");
