@@ -1,5 +1,5 @@
 // js/session.js
-const BASE_API_URL = 'http://localhost:8080/ecoScan_rest/api/usuario';
+const BASE_API_URL = '/api/usuario';
 const GET_NAME_API_URL = `${BASE_API_URL}/getbyemail`;
 
 const CACHE_TTL_MS = 60 * 60 * 1000;

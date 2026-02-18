@@ -1,6 +1,6 @@
 import { showToast } from './utils.js';
 
-const BASE_API_URL = 'http://localhost:8080/ecoScan_rest/api/recicladora';
+const BASE_API_URL = '/api/recicladora';
 const GET_ALL = `${BASE_API_URL}/getall`;
 const GET_ACTIVAS = `${BASE_API_URL}/activas`;
 const GET_INACTIVAS = `${BASE_API_URL}/inactivas`;
