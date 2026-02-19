@@ -403,7 +403,7 @@ function actualizarTablaMaterialesRecicladora() {
 
 async function cargarSelectMateriales() {
     try {
-        const response = await fetch('http://localhost:8080/ecoScan_rest/api/material/getall', {
+        const response = await fetch('/api/material/getall', {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
