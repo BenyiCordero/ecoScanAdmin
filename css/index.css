@@ -3,18 +3,20 @@ body{
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+    background-attachment: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
     margin: 0;
+    padding: 1rem;
 }
 
 main{
     width: 100%;
     max-width: 600px;
     display: flex;
-    opacity: 90%;
+    opacity: 95%;
 }
 
 form{
@@ -46,5 +48,11 @@ h2, label{
     main {
         margin-top: 2rem;
         margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 400px) {
+    #login-form .btn-primary {
+        width: 100%;
     }
 }
