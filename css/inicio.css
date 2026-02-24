@@ -77,13 +77,29 @@ body {
     left: var(--sidebar-w);
     right: 0;
     height: 64px;
-    padding: 0 1.25rem;
-    background: rgba(255, 255, 255, 0.9);
+    padding: 0 1rem;
+    background: rgba(255, 255, 255, 0.95);
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 4px 18px rgba(15, 23, 36, 0.06);
     z-index: 50;
+}
+
+@media (max-width: 576px) {
+    #topbar {
+        padding: 0 0.75rem;
+        height: 56px;
+    }
+    
+    #topbar .avatar {
+        width: 32px;
+        height: 32px;
+    }
+    
+    #sidebarToggle {
+        padding: 0.4rem 0.6rem;
+    }
 }
 
 .avatar {
@@ -100,6 +116,13 @@ body {
     margin-top: 84px;
     padding: 1.25rem;
     width: calc(100% - var(--sidebar-w));
+    min-height: calc(100vh - 84px);
+}
+
+@media (max-width: 991.98px) {
+    #main-content {
+        padding: 0.75rem;
+    }
 }
 
 .panel-card {
@@ -125,10 +148,30 @@ body {
     }
 
     #sidebar {
-        position: relative;
-        width: 100%;
-        min-height: auto;
-        box-shadow: none;
+        position: fixed;
+        left: -280px;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        min-height: 100vh;
+        z-index: 1050;
+        transition: left 0.3s ease;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    #sidebar.sidebar-open {
+        left: 0;
+    }
+
+    body.sidebar-active::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
     }
 
     #topbar {
@@ -137,14 +180,47 @@ body {
 
     #main-content {
         margin-left: 0;
-        margin-top: 120px;
+        margin-top: 70px;
+        width: 100%;
+        padding: 1rem;
     }
 
     .brand {
-        justify-content: center;
+        justify-content: flex-start;
+        padding-left: 0.5rem;
+    }
+
+    #sidebarToggle {
+        display: flex !important;
     }
 }
 
 .text-muted {
     color: var(--muted) !important;
+}
+
+.table-responsive {
+    border-radius: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.badge {
+    font-size: 0.7rem;
+    padding: 0.35em 0.6em;
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    h4 {
+        font-size: 1.1rem;
+    }
+    
+    .panel-card {
+        padding: 0.75rem !important;
+    }
 }
