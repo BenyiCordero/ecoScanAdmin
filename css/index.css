@@ -201,38 +201,33 @@ label[for="password"]::before {
 }
 
 /* ============================================
-   RESPONSIVE (Móviles)
+   RESPONSIVE
    ============================================ */
 
-@media (max-width: 768px) {
-
+@media (max-width: 700px) {
+    /* Ocultar el texto inspiracional */
+    body::after {
+        display: none;
+    }
+    
     /* En móviles: imagen arriba, formulario abajo */
     body::before {
         position: relative;
         width: 100%;
         height: 35vh;
     }
-
-    body::after {
-        position: absolute;
-        top: 17.5vh;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 90%;
-        font-size: 1.2rem;
-    }
-
+    
     main {
         position: relative;
         width: 100%;
         height: 65vh;
-        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
     }
-
+    
     form {
         padding: 1.5rem;
     }
-
+    
     #iniciar {
         font-size: 1.8rem;
     }
