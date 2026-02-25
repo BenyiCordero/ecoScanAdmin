@@ -29,12 +29,11 @@ body {
 }
 
 /* ============================================
-   LAYOUT SPLIT SCREEN
+   LAYOUT SPLIT SCREEN (Desktop)
    ============================================ */
 
 /* Contenedor principal - lado izquierdo (imagen) */
-body::before {
-    content: '';
+#bg-image {
     position: fixed;
     left: 0;
     top: 0;
@@ -49,32 +48,25 @@ body::before {
 }
 
 /* Contenido inspiracional del lado izquierdo */
-body::after {
-    content: '🌿 Juntos por un planeta más limpio\A\ASmall actions, big impact';
-    position: fixed;
+#bg-image::after {
+    content: '♻️\A\A🌿 Juntos por un planeta más limpio\A\A"Pequeñas acciones generan grandes cambios"';
+    position: absolute;
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 50%;
+    width: 100%;
     text-align: center;
     color: var(--eco-white);
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 300;
     line-height: 1.6;
     padding: 0 3rem;
     white-space: pre-line;
-    z-index: 1;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Icono de reciclaje decorativo */
-body::after {
-    content: '♻️\A\A🌿 Juntos por un planeta más limpio\A\A"Pequeñas acciones generan grandes cambios"';
-    font-size: 1.5rem;
-}
-
 /* ============================================
-   FORMULARIO LOGIN (Lado derecho)
+   FORMULARIO LOGIN (Lado derecho - Desktop)
    ============================================ */
 
 main {
@@ -201,40 +193,79 @@ label[for="password"]::before {
 }
 
 /* ============================================
-   RESPONSIVE (Móviles)
+   RESPONSIVE (Móviles - Imagen completa)
    ============================================ */
 
 @media (max-width: 768px) {
+    body {
+        display: block;
+    }
 
-    /* En móviles: imagen arriba, formulario abajo */
-    body::before {
-        position: relative;
+    /* Imagen completa de fondo */
+    #bg-image {
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
-        height: 35vh;
+        height: 100vh;
+        background: linear-gradient(135deg, rgba(27, 94, 32, 0.75), rgba(46, 125, 50, 0.85)),
+            url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200') center/cover;
     }
 
-    body::after {
-        position: absolute;
-        top: 17.5vh;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 90%;
-        font-size: 1.2rem;
+    /* Ocultar texto inspiracional en móvil */
+    #bg-image::after {
+        display: none;
     }
 
+    /* Formulario centrado sobre la imagen */
     main {
         position: relative;
         width: 100%;
-        height: 65vh;
-        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem;
     }
 
     form {
+        max-width: 100%;
         padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 20px;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     }
 
     #iniciar {
         font-size: 1.8rem;
+    }
+
+    .form-control {
+        padding: 0.8rem 1rem;
+    }
+
+    .btn-primary {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 400px) {
+    form {
+        padding: 1.2rem;
+    }
+
+    #iniciar {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
     }
 }
 
